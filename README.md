@@ -9,12 +9,14 @@ npm install
 npm run dev
 ```
 
-## API — labs.local
+## API
+**hostname: labs.local**
+
 The API server is running on the local WiFi network setup for Labs 2024. 
 You should be able to verify connection get sending a GET request to `labs.local`
 
 ### Temperature & Humidity 
-#### `POST labs.local/temp-humid` 
+#### `POST /temp-humid` 
 To submit temperature & humidity data to the server, generate a POST request to the endpoint with a JSON blob (example below):
 
 ```
