@@ -2,6 +2,11 @@ import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { google } from 'googleapis';
 
+interface TemperatureHumiditySensor {
+  temperature: number;
+  humidity: number;
+}
+
 const app = new Hono();
 
 // Google Sheets setup
@@ -18,42 +23,20 @@ app.get('/', (c) => {
 });
 
 app.post('/temp-humid', async (c) => {
-  console.log('Received request to /temp-humid');
-
-  let data;
-  try {
-    // Log the raw request body for debugging
-    const rawBody = await c.req.text();
-    console.log('Raw request body:', rawBody);
-
-    // Try to parse the JSON
-    data = JSON.parse(rawBody);
-    console.log('Parsed data:', data);
-  } catch (error) {
-    console.error('Error parsing JSON:', error);
-    return c.json({ error: 'Invalid JSON in request body' }, 400);
-  }
-
-  // Validate the data
-  if (!data || typeof data !== 'object') {
-    return c.json({ error: 'Invalid data format' }, 400);
-  }
+  const data: TemperatureHumiditySensor = await c.req.json();
 
   // Use data from the request, or fall back to default values
-  const sensorId = data.sensor_id || 'sensor-1';
-  const temperature = data.temperature || 20;
-  const humidity = data.humidity || 0.01;
-
-  console.log('Writing data to Google Sheets!');
+  const temperature = data.temperature || 0;
+  const humidity = data.humidity || 0;
 
   // Write to Google Sheets
   try {
     await sheets.spreadsheets.values.append({
       spreadsheetId,
-      range: 'temp-humid!A:D', // Changed from A:E to A:D as we're only sending 4 values
-      valueInputOption: 'USER_ENTERED',
+      range: 'temp-humid!A:D', // table_name!range
+      valueInputOption: 'USER_ENTERED', // use user-entered data
       requestBody: {
-        values: [[new Date().toISOString(), sensorId, temperature, humidity]],
+        values: [[new Date().toISOString(), temperature, humidity]],
       },
     });
     console.log('Data written to Google Sheets');
@@ -64,7 +47,7 @@ app.post('/temp-humid', async (c) => {
 
   return c.json({
     message: 'Data received and written to Google Sheets successfully',
-    data: { sensorId, temperature, humidity },
+    data: { temperature, humidity },
   });
 });
 
