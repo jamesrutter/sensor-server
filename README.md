@@ -17,7 +17,9 @@ You should be able to verify connection get sending a GET request to `labs.local
 #### `POST labs.local/temp-humid` 
 To submit temperature & humidity data to the server, generate a POST request to the endpoint with a JSON blob (example below):
 
-```{
+```
+{
   "temperature": 22.6,
   "humidity": 0.41
-}```
+}
+```
