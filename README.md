@@ -8,6 +8,7 @@ Simple HTTP Server to run on a raspberry pi and collect environmental sensor dat
 npm install
 npm run dev
 ```
+👉 In order to get this server working, you need to setup Google Sheets API with a service account key. I am not including the one I setup for Labs on this repo. 
 
 ## API
 **hostname: labs.local**
